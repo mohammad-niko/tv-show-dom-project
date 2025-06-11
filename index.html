@@ -1,12 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
-    
-</body>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <!-- Header  -->
+    <header id="header">
+      <nav class="navbar">
+        <div class="logo" style="font-size: 1.4rem"><span>TV</span>SHOW</div>
+
+        <div class="div-parent-search-form">
+          <form class="navbar-form">
+            <input
+              class="navbar-form-input"
+              type="search"
+              placeholder="Search movie"
+              aria-label="Search"
+            />
+            <i class="bi bi-search search-icon"></i>
+          </form>
+          <div class="parent-icon-play">
+            <i class="bi bi-play-fill play-icon"></i>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- sidebar -->
+    <aside class="sidebar">
+      <ul class="sidebar-ul">
+        <li class="childe-ul-sid">
+          <i class="bi bi-house-door-fill side-icons"></i>
+          <a class="a-li-ul-sidbar" href="#">Home</a>
+        </li>
+        <li class="childe-ul-sid">
+          <i class="bi bi-fire side-icons"></i>
+          <a class="a-li-ul-sidbar" href="#">Trending</a>
+        </li>
+        <li class="childe-ul-sid">
+          <i class="bi bi-heart side-icons"></i>
+          <a class="a-li-ul-sidbar" href="#">Favourite</a>
+        </li>
+        <li class="childe-ul-sid">
+          <i class="bi bi-person-circle side-icons"></i>
+          <a class="a-li-ul-sidbar" href="#">Login</a>
+        </li>
+      </ul>
+    </aside>
+    <!-- main -->
+    <main>
+      <img
+        class="img-main responsive"
+        src="./images/Assassins-Creed-Games.jpg"
+        alt="Assassins-Creed"
+      />
+      <div class="movies-side responsive">MOVIES</div>
+      <section class="render-ipsodes responsive"></section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/app.js" type="module"></script>
+    <script src="js/ui.js" type="module"></script>
+    <script src="js/search.js" type="module"></script>
+  </body>
 </html>
