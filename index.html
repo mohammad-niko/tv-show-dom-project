@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>TVSHOW</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
@@ -23,7 +23,7 @@
         <div class="logo" style="font-size: 1.4rem"><span>TV</span>SHOW</div>
 
         <div class="div-parent-search-form">
-          <form class="navbar-form">
+          <div class="navbar-form">
             <input
               class="navbar-form-input"
               type="search"
@@ -31,14 +31,14 @@
               aria-label="Search"
             />
             <i class="bi bi-search search-icon"></i>
-          </form>
+          </div>
           <div class="parent-icon-play">
             <i class="bi bi-play-fill play-icon"></i>
           </div>
         </div>
       </nav>
     </header>
-    <!-- sidebar -->
+    <!-- Sidebar -->
     <aside class="sidebar">
       <ul class="sidebar-ul">
         <li class="childe-ul-sid">
@@ -59,19 +59,63 @@
         </li>
       </ul>
     </aside>
-    <!-- main -->
-    <main>
-      <img
-        class="img-main responsive"
-        src="./images/Assassins-Creed-Games.jpg"
-        alt="Assassins-Creed"
-      />
-      <div class="movies-side responsive">MOVIES</div>
-      <section class="render-ipsodes responsive"></section>
-    </main>
+    <!-- Main -->
+    <main></main>
+    <!--Footer -->
+    <footer>
+      <ul class="social-icons">
+        <li class="social-item">
+          <a
+            href="https://www.linkedin.com/in/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="bi bi-linkedin"></i>
+          </a>
+        </li>
+        <li class="social-item">
+          <a
+            href="https://github.com/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="bi bi-github"></i>
+          </a>
+        </li>
+        <li class="social-item">
+          <a
+            href="https://t.me/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="bi bi-telegram"></i>
+          </a>
+        </li>
+        <li class="social-item">
+          <a
+            href="https://www.instagram.com/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="bi bi-instagram"></i>
+          </a>
+        </li>
+      </ul>
+
+      <p class="tenx-para">
+        Special thanks to
+        <a href="https://www.tvmaze.com/api" target="_blank" rel="noopener"
+          >TVmaze</a
+        >
+        for providing the API and making this project possible.
+      </p>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="js/app.js" type="module"></script>
     <script src="js/ui.js" type="module"></script>
     <script src="js/search.js" type="module"></script>
+    <script src="js/Filter.js" type="module"></script>
+    <script src="js/scroll.js" type="module"></script>
+    <script src="js/router.js" type="module"></script>
   </body>
 </html>

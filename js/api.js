@@ -1,5 +1,21 @@
-
-
+export async function getSerials(page = 0) {
+  const config = {
+    header: {
+      Accept: "application/json",
+    },
+  };
+  try {
+    const { data } = await axios.get(
+      `https://api.tvmaze.com/shows?page=${page}`,
+      config
+    );
+    // const dramas = data.filter(show => show.genres.includes("Action"));
+    console.log(data);
+    return data;
+  } catch (error) {
+    alert(error);
+  }
+}
 
 export async function apiSearch(query) {
   const config = {
@@ -12,27 +28,27 @@ export async function apiSearch(query) {
       `https://api.tvmaze.com/search/shows?q=${query}`,
       config
     );
-    console.log(data);
-    return data
+    return data;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function getSerials() {
+export async function getEpisodesApi(showId) {
   const config = {
-    header: {
+    headers: {
       Accept: "application/json",
     },
   };
   try {
     const { data } = await axios.get(
-      `https://api.tvmaze.com/shows?page=0`,
+      `https://api.tvmaze.com/shows/${showId}/episodes`,
       config
     );
-    // const dramas = data.filter(show => show.genres.includes("Action"));
+    console.log(data);
     return data;
   } catch (error) {
-    alert(error);
+    console.log(error);
   }
 }
+
