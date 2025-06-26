@@ -1,3 +1,4 @@
+import {showError} from "./ui.js"
 export async function getSerials(page = 0) {
   const config = {
     header: {
@@ -9,11 +10,9 @@ export async function getSerials(page = 0) {
       `https://api.tvmaze.com/shows?page=${page}`,
       config
     );
-    // const dramas = data.filter(show => show.genres.includes("Action"));
-    console.log(data);
     return data;
   } catch (error) {
-    alert(error);
+    showError(error)
   }
 }
 
@@ -30,7 +29,7 @@ export async function apiSearch(query) {
     );
     return data;
   } catch (error) {
-    console.log(error);
+        console.log(error);
   }
 }
 
@@ -48,7 +47,7 @@ export async function getEpisodesApi(showId) {
     console.log(data);
     return data;
   } catch (error) {
-    console.log(error);
+        showError(error)
   }
 }
 

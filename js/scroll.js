@@ -12,7 +12,7 @@ export function handleScroll() {
   }
 }
 
-let counterPage = 0;
+export let counterPage = 0;
 let isGeveData = false;
 export async function loadMoreMovies() {
   if (isGeveData) return;

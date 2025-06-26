@@ -1,6 +1,7 @@
 import { apiSearch } from "./api.js";
 import { renderSearchEpisodes } from "./ui.js";
 import { clearEpisodes } from "./ui.js";
+import { setIsHomeView } from "./app.js";
 const sectionParent = document.querySelector(".render-ipsodes");
 export async function searchLive(e) {
   try {
