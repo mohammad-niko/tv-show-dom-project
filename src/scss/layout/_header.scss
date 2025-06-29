@@ -1,0 +1,71 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+header {
+  width: 100%;
+  display: inline-block;
+  position: fixed;
+  top: 20px;
+  z-index: 1;
+
+  .navbar {
+    @include flex-center(space-around, center);
+
+    .logo {
+      color: white;
+      span {
+        color: rgba(23, 171, 121, 255);
+      }
+    }
+
+    .div-parent-search-form {
+      @include flex-center();
+      gap: 10px;
+
+      .navbar-form {
+        position: relative;
+
+        .navbar-form-input {
+          all: unset;
+          width: 250px;
+          height: 30px;
+          border: 0.5px solid $input-border;
+          border-radius: 20px;
+          color: $text-light;
+          padding-left: 20px;
+          padding-bottom: 2px;
+          background-color: $input-bg;
+
+          &::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+            appearance: none;
+          }
+
+          &::placeholder {
+            color: $text-light;
+          }
+        }
+        .search-icon {
+          color: white;
+          position: absolute;
+          right: 15px;
+          top: 4.5px;
+        }
+      }
+
+      .parent-icon-play {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: $green;
+        @include flex-center();
+        transition: box-shadow 0.3s ease;
+
+        .play-icon {
+          color: white;
+          font-size: 30px;
+        }
+      }
+    }
+  }
+}

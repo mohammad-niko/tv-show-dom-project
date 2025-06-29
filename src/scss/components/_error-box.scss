@@ -1,0 +1,51 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.div-of-error {
+  width: 400px;
+  height: 200px;
+  position: absolute;
+  top: 35%;
+  @include flex-center(space-between, center, column);
+  background-color: rgba(29, 30, 41, 255);
+  color: white;
+  border-radius: 10px;
+  z-index: 101;
+
+  @include respond(1050px) {
+    & {
+      width: 300px;
+    }
+  }
+  @include respond(532px) {
+    & {
+      width: 200px;
+    }
+  }
+  
+  .error-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+  }
+
+  .p-Of-error {
+    margin-top: 20px;
+  }
+
+  .parent-of-btns {
+    width: 100%;
+    height: 40px;
+    @include flex-center(end, center);
+    margin-right: 15px;
+    margin-bottom: 10px;
+    gap: 10px;
+
+    .btn-errors {
+      color: white;
+      background-color: $green;
+    }
+  }
+}

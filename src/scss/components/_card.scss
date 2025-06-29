@@ -1,0 +1,25 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.div-card-parent {
+  width: $card-width;
+  height: $card-height;
+  position: relative;
+
+  .card-serial {
+    transition: all 0.1s linear;
+
+    &:hover {
+      transform: scale(0.95);
+      cursor: pointer;
+    }
+
+    .card-body {
+      width:$card-width;
+      position: absolute;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(2px);
+    }
+  }
+}

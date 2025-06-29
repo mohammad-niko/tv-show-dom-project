@@ -1,0 +1,26 @@
+@mixin flex-center($justify: center, $align: center, $direction: row) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+  flex-direction: $direction;
+}
+
+@mixin respond($breakpoint) {
+  @if ($breakpoint == 1050px) {
+    @media (max-width: 1050px) {
+      @content;
+    }
+  } @else if($breakpoint == 835px) {
+    @media (max-width: 835px) {
+      @content;
+    }
+  } @else if($breakpoint == 690px) {
+    @media (max-width: 690px) {
+      @content;
+    }
+  } @else if($breakpoint ==532px) {
+    @media (max-width: 532px) {
+      @content;
+    }
+  }
+}

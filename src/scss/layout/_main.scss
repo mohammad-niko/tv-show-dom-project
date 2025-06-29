@@ -1,0 +1,60 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+main {
+  width: 100%;
+  display: inline-flex;
+
+  @include flex-center(center, center, column);
+  margin-top: 100px;
+  gap: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .img-main {
+    border-radius: 7px;
+  }
+
+  .movies-side {
+    background-color: $input-bg;
+    height: 45px;
+    @include flex-center(start, center);
+    color: white;
+    padding-left: 7px;
+    border-radius: 5px;
+  }
+
+  .render-ipsodes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+}
+
+
+
+.responsive {
+  width: 920px;
+
+  @media (max-width: 1050px) {
+    width: 700px;
+  }
+
+  @media (max-width: 835px) {
+    width: 550px;
+  }
+
+  @media (max-width: 690px) {
+    width: 400px;
+  }
+
+  @media (max-width: 532px) {
+    width: 300px;
+  }
+}

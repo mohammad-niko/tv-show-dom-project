@@ -4,7 +4,7 @@
   "description": "A lightweight and interactive web application that fetches and displays TV show episodes using the TVMaze API. Built to demonstrate DOM manipulation, API integration, and clean UI with search and filtering features.",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "sass": "sass src/scss/styles.scss dist/css/styles.css --watch"
   },
   "repository": {
     "type": "git",

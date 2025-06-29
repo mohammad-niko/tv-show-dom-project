@@ -131,6 +131,13 @@ export function renderSkeletonCards(elemnt, display) {
 }
 
 export function showError(error) {
+  const oldError = document.querySelector(".div-of-error");
+  if (oldError) oldError.remove();
+
+  const overlay = document.createElement("div");
+  overlay.classList.add("error-overlay");
+  document.body.appendChild(overlay);
+
   const divOfError = document.createElement("div");
   divOfError.classList.add("div-of-error");
   main.appendChild(divOfError);
@@ -146,24 +153,22 @@ export function showError(error) {
   divOfError.appendChild(parentOfBtns);
 
   const btnTry = document.createElement("button");
-  btnTry.classList.add("btn", "btn-try","btn-errors");
-  btnTry.textContent = "Try Agin";
+  btnTry.classList.add("btn", "btn-try", "btn-errors");
+  btnTry.textContent = "Try Again";
   parentOfBtns.appendChild(btnTry);
 
-  btnTry.addEventListener("click",()=>{
-   location.reload()
-  })
+  btnTry.addEventListener("click", () => {
+    overlay.remove();
+    location.reload();
+  });
 
   const btnOk = document.createElement("button");
-  btnOk.classList.add("btn", "btn-ok","btn-errors");
+  btnOk.classList.add("btn", "btn-ok", "btn-errors");
   btnOk.textContent = "OK";
   parentOfBtns.appendChild(btnOk);
 
-  btnOk.addEventListener("click",()=>{
-    divOfError.remove()
-  })
+  btnOk.addEventListener("click", () => {
+    overlay.remove();
+    divOfError.remove();
+  });
 }
-
-
-
- 

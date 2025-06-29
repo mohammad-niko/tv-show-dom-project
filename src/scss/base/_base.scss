@@ -1,0 +1,22 @@
+@use "../abstracts/variables" as *;
+
+html {
+  overflow-y: scroll;
+
+  body {
+    background-color: $bg-dark;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(100, 100, 100, 0.3);
+      border-radius: 4px;
+    }
+  }
+}

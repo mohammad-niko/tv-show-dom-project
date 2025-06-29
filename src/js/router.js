@@ -3,6 +3,7 @@ import {
   clearEpisodes,
   renderEpisodesView,
   renderMovies,
+  renderSkeletonCards,
 } from "./ui.js";
 import { getEpisodesApi, getSerials } from "./api.js";
 import { setIsHomeView } from "./app.js";
@@ -30,7 +31,7 @@ export async function handleRoute() {
       setIsHomeView(false);
     }
   } catch (error) {
-    alert(error);
+    console.log(error);
   } finally {
     const skeletons = document.querySelectorAll(".div-card-loading");
     skeletons.forEach((el) => el.remove());
