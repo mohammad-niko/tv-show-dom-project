@@ -58,8 +58,8 @@ header {
         height: 30px;
         border-radius: 50%;
         background-color: $green;
-        @include flex-center();
-        transition: box-shadow 0.3s ease;
+        @include flex-center(center,center);
+        
 
         .play-icon {
           color: white;

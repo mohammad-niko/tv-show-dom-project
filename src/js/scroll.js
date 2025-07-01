@@ -1,5 +1,5 @@
 import { getSerials } from "./api.js";
-import { renderMovies } from "./ui.js";
+import { renderCard, renderSkeletonCards } from "./ui.js";
 import { isHome } from "./app.js";
 export function handleScroll() {
   if (!isHome) return;
@@ -20,11 +20,14 @@ export async function loadMoreMovies() {
   counterPage++;
   try {
     const sectionParent = document.querySelector(".render-ipsodes");
+    for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
     const dataApi = await getSerials(counterPage);
-    dataApi.forEach((data) => renderMovies(data, sectionParent));
+    dataApi.forEach((data) => renderCard(data, sectionParent));
   } catch (error) {
     console.log(error);
   } finally {
     isGeveData = false;
+    const skeletons = document.querySelectorAll(".div-card-loading");
+    skeletons.forEach((el) => el.remove());
   }
 }

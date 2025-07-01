@@ -1,34 +1,55 @@
 import {
   renderHomeView,
-  clearEpisodes,
-  renderEpisodesView,
-  renderMovies,
+  renderCard,
   renderSkeletonCards,
+  renderEpisodes,
+  clearHome,
 } from "./ui.js";
 import { getEpisodesApi, getSerials } from "./api.js";
 import { setIsHomeView } from "./app.js";
 
+import { searchLive } from "./search.js";
+import { getSerialEpisodes } from "./episodes.js";
+import { handleScroll } from "./scroll.js";
+
+window.addEventListener("DOMContentLoaded", handleRoute);
 window.addEventListener("hashchange", handleRoute);
+// window.addEventListener("popstate", handleRoute);
 
 export async function handleRoute() {
   try {
     const hash = location.hash || "#/";
-    const dataSerials = await getSerials();
-    const sectionParent = document.querySelector(".render-ipsodes");
-    for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
-
-    clearEpisodes();
     console.log("Hash changed to:", location.hash);
-
+    //HOME VIEW:
     if (hash === "#/" || hash === "") {
-      renderHomeView();
       setIsHomeView(true);
-      dataSerials.forEach((data) => renderMovies(data, sectionParent));
+      renderHomeView();
+      const sectionParent = document.querySelector(".render-ipsodes");
+      for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
+
+      const data = await getSerials();
+      data.forEach((data) => renderCard(data, sectionParent));
+
+      const input = document.querySelector(".navbar-form-input");
+      input.addEventListener("input", searchLive);
+
+      window.addEventListener("scroll", handleScroll);
+      sectionParent.addEventListener("click", getSerialEpisodes);
     } else if (hash.startsWith("#/show/")) {
+      setIsHomeView(false);
+      clearHome();
+
+      const sectionParent = document.querySelector(".render-ipsodes");
+      for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
+
+      sectionParent.removeEventListener("click", getSerialEpisodes);
+
       const id = hash.split("/")[2];
       const episodes = await getEpisodesApi(id);
-      renderEpisodesView(episodes);
-      setIsHomeView(false);
+      episodes.forEach((data) => renderEpisodes(data, sectionParent));
+
+      const input = document.querySelector(".navbar-form-input");
+      input.value = "";
     }
   } catch (error) {
     console.log(error);

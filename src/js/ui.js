@@ -2,6 +2,8 @@ import { shortenTitle } from "./Filter.js";
 const main = document.querySelector("main");
 
 export function renderHomeView() {
+  main.innerHTML = "";
+
   const img = document.createElement("img");
   img.classList.add("img-main", "responsive");
   img.src = "./images/Assassins-Creed-Games.jpg";
@@ -18,7 +20,7 @@ export function renderHomeView() {
   main.appendChild(section);
 }
 
-export function renderMovies(data, elemnt) {
+export function renderCard(data, elemnt) {
   const divParent = document.createElement("div");
   divParent.classList.add("div-card-parent");
   elemnt.appendChild(divParent);
@@ -67,22 +69,20 @@ export function clearEpisodes() {
   sectionParent.innerHTML = "";
 }
 
-export function renderSearchEpisodes(episodes) {
-  const sectionParent = document.querySelector(".render-ipsodes");
-  renderMovies(episodes, sectionParent);
-}
-
-export function renderEpisodesView(episodes) {
+export function clearHome() {
   const img = document.querySelector(".img-main");
   const div = document.querySelector(".movies-side");
-  const sectionParent = document.querySelector(".render-ipsodes ");
 
-  img.style.display = "none";
-  div.style.display = "none";
+  if (img) img.remove();
+  if (div) div.remove();
 
-  clearEpisodes();
+  const sectionParent = document.querySelector(".render-ipsodes");
+  if (sectionParent) sectionParent.innerHTML = "";
+}
 
-  episodes.forEach((data) => renderEpisodes(data, sectionParent));
+export function renderSearchEpisodes(episodes) {
+  const sectionParent = document.querySelector(".render-ipsodes");
+  renderCard(episodes, sectionParent);
 }
 
 export function renderEpisodes(data, elemnt) {
@@ -91,34 +91,51 @@ export function renderEpisodes(data, elemnt) {
   elemnt.appendChild(divParent);
 
   const divCard = document.createElement("div");
-  divCard.classList.add("card", "card-serial");
+  divCard.classList.add("card", "card-episode");
   divCard.style.backgroundImage = `url(${
-    data.image?.medium || "./images/default.jpg"
+    data.image?.original || data.image?.medium || "./images/default.jpg"
   })`;
   divCard.style.backgroundSize = "cover";
   divCard.style.backgroundPosition = "center";
-  divCard.style.height = "300px";
+  divCard.style.backgroundRepeat = "no-repeat";
+
   divCard.setAttribute("id", `${data.id}`);
+
   divParent.appendChild(divCard);
 
   const divBody = document.createElement("div");
-  // divBody.classList.add("");
+  divBody.classList.add("episode-card-body");
   divBody.style.paddingBottom = "5px";
   divCard.appendChild(divBody);
 
+  const tooltip = document.createElement("div");
+  tooltip.classList.add("tooltip");
+  tooltip.textContent = `${data.summary.replace(/<\/?p>/g, "")}`;
+  divBody.appendChild(tooltip);
+
   const pRank = document.createElement("p");
   pRank.classList.add("show-rand");
-  pRank.textContent = `S0${data.season}-E${data.number} | ${data.name}`;
+  pRank.textContent = `S0${data.season}-E${data.number} | ${
+    data.name.slice(0, 10) + "..."
+  }`;
   pRank.style.color = "#fff";
   pRank.style.margin = 0;
   divBody.appendChild(pRank);
 
+  const boxIcon = document.createElement("div");
+  boxIcon.classList.add("box-icon");
+  divBody.appendChild(boxIcon);
+
   const parentOfIcon = document.createElement("div");
   parentOfIcon.classList.add("parent-icon-play");
-  divCard.appendChild(parentOfIcon);
+  boxIcon.appendChild(parentOfIcon);
+
+parentOfIcon.addEventListener("click",()=>{
+  window.open(data.url, "_blank");
+})
 
   const iconOfplay = document.createElement("i");
-  iconOfplay.classList.add("bi", "bi-play-fill", "play-icon");
+  iconOfplay.classList.add("bi", "bi-play", "play-episode-icon");
   parentOfIcon.appendChild(iconOfplay);
 }
 

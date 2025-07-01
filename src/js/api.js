@@ -1,4 +1,6 @@
 import {showError} from "./ui.js"
+
+
 export async function getSerials(page = 0) {
   const config = {
     header: {

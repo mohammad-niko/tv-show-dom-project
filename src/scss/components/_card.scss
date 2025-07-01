@@ -1,6 +1,7 @@
 @use "../abstracts/variables" as *;
 @use "../abstracts/mixins" as *;
 
+//Home page cards:
 .div-card-parent {
   width: $card-width;
   height: $card-height;
@@ -15,11 +16,85 @@
     }
 
     .card-body {
-      width:$card-width;
+      width: $card-width;
       position: absolute;
       bottom: 0;
       background-color: rgba(0, 0, 0, 0.1);
       backdrop-filter: blur(2px);
+    }
+  }
+}
+
+// episode cards:
+
+.card-episode {
+  height: 300px;
+  @include flex-center(center, end);
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  .episode-card-body {
+    width: 100%;
+    height: 100px;
+    position: relative;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    padding: 0px 10px;
+    padding-top: 10px;
+
+.tooltip {
+  max-width: 170px;
+  max-height: 150px;
+  position: absolute;
+  left: 0;
+  top: -50px;
+  background-color: $bg-dark;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 100;
+  
+  overflow-y: auto; 
+  white-space: normal;  
+
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+}
+    &:hover {
+      .tooltip {
+        opacity: 1;
+      }
+    }
+    .box-icon {
+      @include flex-center(end, center);
+      margin-top: 10px;
+      .parent-icon-play {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: $green;
+        @include flex-center(center, center);
+        .play-episode-icon {
+          color: white;
+          font-size: 40px;
+        }
+      }
     }
   }
 }
