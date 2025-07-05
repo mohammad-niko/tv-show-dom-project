@@ -68,6 +68,56 @@ header .navbar .div-parent-search-form .navbar-form .navbar-form-input::-webkit-
 header .navbar .div-parent-search-form .navbar-form .navbar-form-input::placeholder {
   color: #c2bfbf;
 }
+header .navbar .div-parent-search-form .navbar-form .custom-select {
+  width: 250px;
+  height: 30px;
+  border: 0.5px solid #595a63;
+  border-radius: 20px;
+  color: #c2bfbf;
+  padding-left: 20px;
+  padding-top: 3px;
+  background-color: #2d2e37;
+  white-space: normal;
+  position: relative;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .selected {
+  all: unset;
+  width: 250px;
+  height: 30px;
+  border-radius: 20px;
+  color: #c2bfbf;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option {
+  width: 90%;
+  max-height: 150px;
+  background-color: #2d2e37;
+  border-radius: 5px;
+  position: absolute;
+  left: 15px;
+  overflow-y: auto;
+  padding-left: 5px;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option .options {
+  border-bottom: 0.5px solid #555;
+  list-style: none;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option::-webkit-scrollbar {
+  width: 6px;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+header .navbar .div-parent-search-form .navbar-form .icon-select {
+  position: absolute;
+  right: 15px;
+  top: 7px;
+  color: white;
+  font-size: 13px;
+}
 header .navbar .div-parent-search-form .navbar-form .search-icon {
   color: white;
   position: absolute;

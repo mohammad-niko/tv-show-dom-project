@@ -1,0 +1,992 @@
+html:
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TVSHOW</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./dist/css/styles.css" />
+  </head>
+  <body>
+    <!-- Header  -->
+    /
+
+folder src/js:
+api:
+import { showError } from "./ui.js";
+
+export async function getSerials(page = 0) {
+  const config = {
+    header: {
+      Accept: "application/json",
+    },
+  };
+  try {
+    const { data } = await axios.get(
+      `https://api.tvmaze.com/shows?page=${page}`,
+      config
+    );
+    return data;
+  } catch (error) {
+    showError(error);
+  }
+}
+
+export async function apiSearch(query) {
+  const config = {
+    headers: {
+      Accept: "application/json",
+    },
+  };
+  try {
+    const { data } = await axios.get(
+      `https://api.tvmaze.com/search/shows?q=${query}`,
+      config
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getEpisodesApi(showId) {
+  const config = {
+    headers: {
+      Accept: "application/json",
+    },
+  };
+  try {
+    const { data } = await axios.get(
+      `https://api.tvmaze.com/shows/${showId}/episodes`,
+      config
+    )
+    return data;
+  } catch (error) {
+    showError(error);
+  }
+}
+
+app:
+
+const homeIcon = document.querySelector(".Home");
+
+homeIcon.addEventListener("click",()=>{
+  location.href="./index.html"
+})
+
+export let isHome = true;
+export function setIsHomeView(value) {
+  isHome = value;
+}
+
+
+episodes:
+export async function getSerialEpisodes(e) {
+  const card = e.target.closest(".card-serial");
+  if (!card) return;
+
+  const episodeId = card.id;
+  if (!episodeId) return;
+
+  location.hash = `#/show/${episodeId}`; 
+}
+
+filtere:
+export function shortenTitle(title, maxLength = 20) {
+  if (title.length > maxLength) {
+    return title.slice(0, maxLength) + '...';
+  } else {
+    return title;
+  }
+}
+index:
+import './router.js';
+import './app.js';
+import './api.js';
+import './ui.js';
+import './search.js';
+import './scroll.js';
+import './Filter.js';
+import './episodes.js';
+
+router:
+import {
+  renderHomeView,
+  renderCard,
+  renderSkeletonCards,
+  renderEpisodes,
+  clearHome,
+  createSearchInput,
+  createEpisodesInput,
+  renderLiOfInputEpisodes,
+} from "./ui.js";
+import { getEpisodesApi, getSerials } from "./api.js";
+import { setIsHomeView } from "./app.js";
+
+import { searchLive } from "./search.js";
+import { getSerialEpisodes } from "./episodes.js";
+import { handleScroll } from "./scroll.js";
+
+window.addEventListener("DOMContentLoaded", handleRoute);
+window.addEventListener("hashchange", handleRoute);
+// window.addEventListener("popstate", handleRoute);
+
+export async function handleRoute() {
+  try {
+    const hash = location.hash || "#/";
+    //HOME VIEW:
+    if (hash === "#/" || hash === "") {
+      setIsHomeView(true);
+      renderHomeView();
+
+      const inputParent = document.querySelector(".navbar-form");
+      createSearchInput();
+
+      const sectionParent = document.querySelector(".render-ipsodes");
+      for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
+
+      const data = await getSerials();
+      data.forEach((data) => renderCard(data, sectionParent));
+
+      const input = document.querySelector(".navbar-form-input");
+      input.addEventListener("input", searchLive);
+
+      window.addEventListener("scroll", handleScroll);
+      sectionParent.addEventListener("click", getSerialEpisodes);
+    } else if (hash.startsWith("#/show/")) {
+      //Episodes Viwe
+      setIsHomeView(false);
+      clearHome();
+
+      const inputParent = document.querySelector(".navbar-form");
+      inputParent.innerHTML = "";
+      createEpisodesInput();
+      const sectionParent = document.querySelector(".render-ipsodes");
+      for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
+
+      sectionParent.removeEventListener("click", getSerialEpisodes);
+
+      const id = hash.split("/")[2];
+      const episodes = await getEpisodesApi(id);
+      episodes.forEach((data) => renderEpisodes(data, sectionParent));
+      renderLiOfInputEpisodes(episodes)
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    const skeletons = document.querySelectorAll(".div-card-loading");
+    skeletons.forEach((el) => el.remove());
+  }
+}
+
+scroll:
+import { getSerials } from "./api.js";
+import { renderCard, renderSkeletonCards } from "./ui.js";
+import { isHome } from "./app.js";
+export function handleScroll() {
+  if (!isHome) return;
+  const scrollTop = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const fullHeight = document.body.scrollHeight;
+
+  if (scrollTop + windowHeight >= fullHeight - 0.5) {
+    loadMoreMovies();
+  }
+}
+
+export let counterPage = 0;
+let isGeveData = false;
+export async function loadMoreMovies() {
+  if (isGeveData) return;
+  isGeveData = true;
+  counterPage++;
+  try {
+    const sectionParent = document.querySelector(".render-ipsodes");
+    for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
+    const dataApi = await getSerials(counterPage);
+    dataApi.forEach((data) => renderCard(data, sectionParent));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isGeveData = false;
+    const skeletons = document.querySelectorAll(".div-card-loading");
+    skeletons.forEach((el) => el.remove());
+  }
+}
+
+search:
+import { apiSearch } from "./api.js";
+import { renderSearchEpisodes } from "./ui.js";
+import { clearEpisodes, renderSkeletonCards } from "./ui.js";
+import { setIsHomeView ,} from "./app.js";
+
+export async function searchLive(e) {
+  try {
+    const query = e.target.value.trim().toLowerCase();
+    clearEpisodes();
+    const sectionParent = document.querySelector(".render-ipsodes");
+    for (let i = 0; i < 8; i++) renderSkeletonCards(sectionParent, "inline");
+    if (query.length === 0) {
+      location.reload();
+      setIsHomeView(true);
+      return;
+    }
+    setIsHomeView(false)
+    const result = await apiSearch(query);
+    result.forEach(({ show }) => renderSearchEpisodes(show));
+  } catch (error) {
+    console.log(error);
+  } finally {
+    const skeletons = document.querySelectorAll(".div-card-loading");
+    skeletons.forEach((el) => el.remove());
+  }
+}
+
+ui:
+import { shortenTitle } from "./Filter.js";
+const main = document.querySelector("main");
+
+export function renderHomeView() {
+  main.innerHTML = "";
+
+  const img = document.createElement("img");
+  img.classList.add("img-main", "responsive");
+  img.src = "./images/Assassins-Creed-Games.jpg";
+  img.alt = "Assassins-Creed";
+  main.insertAdjacentElement("afterbegin", img);
+
+  const div = document.createElement("div");
+  div.classList.add("movies-side", "responsive");
+  div.textContent = "MOVIES";
+  main.appendChild(div);
+
+  const section = document.createElement("section");
+  section.classList.add("render-ipsodes", "responsive");
+  main.appendChild(section);
+}
+
+export function renderCard(data, elemnt) {
+  const divParent = document.createElement("div");
+  divParent.classList.add("div-card-parent");
+  elemnt.appendChild(divParent);
+
+  const divCard = document.createElement("div");
+  divCard.classList.add("card", "card-serial");
+  divCard.style.backgroundImage = `url(${
+    data.image?.medium || "./images/default.jpg"
+  })`;
+  divCard.style.backgroundSize = "cover";
+  divCard.style.backgroundPosition = "center";
+  divCard.style.height = "300px";
+  divCard.setAttribute("id", `${data.id}`);
+  divParent.appendChild(divCard);
+
+  const divBody = document.createElement("div");
+  divBody.classList.add("card-body");
+  divBody.style.paddingBottom = "5px";
+  divCard.appendChild(divBody);
+
+  const h5 = document.createElement("h5");
+  h5.classList.add("card-title");
+  h5.textContent = `${shortenTitle(data.name)}`;
+  h5.style.color = "#fff";
+  divBody.appendChild(h5);
+
+  const pGenres = document.createElement("p");
+  pGenres.classList.add("card-text");
+  pGenres.textContent = Array.isArray(data.genres)
+    ? data.genres.join(" | ")
+    : "No genre";
+  pGenres.style.color = "#fff";
+  pGenres.style.fontSize = "0.8rem";
+  divBody.appendChild(pGenres);
+
+  const pRank = document.createElement("p");
+  pRank.classList.add("show-rand");
+  pRank.textContent = data.rating.average;
+  pRank.style.color = "#fff";
+  pRank.style.margin = 0;
+  divBody.appendChild(pRank);
+}
+
+export function clearEpisodes() {
+  const sectionParent = document.querySelector(".render-ipsodes");
+  sectionParent.innerHTML = "";
+}
+
+export function clearHome() {
+  const img = document.querySelector(".img-main");
+  const div = document.querySelector(".movies-side");
+
+  if (img) img.remove();
+  if (div) div.remove();
+
+  const sectionParent = document.querySelector(".render-ipsodes");
+  if (sectionParent) sectionParent.innerHTML = "";
+}
+
+export function renderSearchEpisodes(episodes) {
+  const sectionParent = document.querySelector(".render-ipsodes");
+  renderCard(episodes, sectionParent);
+}
+
+export function renderEpisodes(data, elemnt) {
+  const divParent = document.createElement("div");
+  divParent.classList.add("div-card-parent");
+  elemnt.appendChild(divParent);
+
+  const divCard = document.createElement("div");
+  divCard.classList.add("card", "card-episode");
+  divCard.style.backgroundImage = `url(${
+    data.image?.original || data.image?.medium || "./images/default.jpg"
+  })`;
+  divCard.style.backgroundSize = "cover";
+  divCard.style.backgroundPosition = "center";
+  divCard.style.backgroundRepeat = "no-repeat";
+
+  divCard.setAttribute("id", `${data.id}`);
+
+  divParent.appendChild(divCard);
+
+  const divBody = document.createElement("div");
+  divBody.classList.add("episode-card-body");
+  divBody.style.paddingBottom = "5px";
+  divCard.appendChild(divBody);
+  if (data.summary) {
+    const tooltip = document.createElement("div");
+    tooltip.classList.add("tooltip");
+    tooltip.textContent = `${data.summary.replace(/<\/?p>/g, "")}`;
+    divBody.appendChild(tooltip);
+  }
+
+  const pRank = document.createElement("p");
+  pRank.classList.add("show-rand");
+  pRank.textContent = `S0${data.season}-E${data.number} | ${
+    data.name.slice(0, 10) + "..."
+  }`;
+  pRank.style.color = "#fff";
+  pRank.style.margin = 0;
+  divBody.appendChild(pRank);
+
+  const boxIcon = document.createElement("div");
+  boxIcon.classList.add("box-icon");
+  divBody.appendChild(boxIcon);
+
+  const parentOfIcon = document.createElement("div");
+  parentOfIcon.classList.add("parent-icon-play");
+  boxIcon.appendChild(parentOfIcon);
+
+  parentOfIcon.addEventListener("click", () => {
+    window.open(data.url, "_blank");
+  });
+
+  const iconOfplay = document.createElement("i");
+  iconOfplay.classList.add("bi", "bi-play", "play-episode-icon");
+  parentOfIcon.appendChild(iconOfplay);
+}
+
+export function renderSkeletonCards(elemnt, display) {
+  const divLoding = document.createElement("div");
+  divLoding.classList.add("div-card-loading");
+  elemnt.appendChild(divLoding);
+
+  divLoding.style.display = display;
+}
+
+export function showError(error) {
+  const oldError = document.querySelector(".div-of-error");
+  if (oldError) oldError.remove();
+
+  const overlay = document.createElement("div");
+  overlay.classList.add("error-overlay");
+  document.body.appendChild(overlay);
+
+  const divOfError = document.createElement("div");
+  divOfError.classList.add("div-of-error");
+  main.appendChild(divOfError);
+
+  const p = document.createElement("p");
+  p.classList.add("p-Of-error");
+  p.textContent = error;
+  p.style.fontSize = "1.3rem";
+  divOfError.appendChild(p);
+
+  const parentOfBtns = document.createElement("div");
+  parentOfBtns.classList.add("parent-of-btns");
+  divOfError.appendChild(parentOfBtns);
+
+  const btnOk = document.createElement("button");
+  btnOk.classList.add("btn", "btn-ok", "btn-errors");
+  btnOk.textContent = "OK";
+  parentOfBtns.appendChild(btnOk);
+
+  btnOk.addEventListener("click", () => {
+    overlay.remove();
+    divOfError.remove();
+  });
+}
+
+export function createSearchInput() {
+  const inputParent = document.querySelector(".navbar-form");
+
+  const searchInput = document.createElement("input");
+  searchInput.classList.add("navbar-form-input");
+  searchInput.type = "search";
+  searchInput.placeholder = "Search movie";
+  searchInput.setAttribute("aria-label", "Search");
+  inputParent.appendChild(searchInput);
+
+  const iconSearch = document.createElement("i");
+  iconSearch.classList.add("bi", "bi-search", "search-icon");
+  inputParent.appendChild(iconSearch);
+}
+
+export function createEpisodesInput() {
+  const inputParent = document.querySelector(".navbar-form");
+
+  const divParent = document.createElement("div");
+  divParent.classList.add("custom-select");
+  inputParent.appendChild(divParent);
+
+  const selectedDiv = document.createElement("div");
+  selectedDiv.classList.add("selected");
+  selectedDiv.textContent = "All Episodes";
+  divParent.appendChild(selectedDiv);
+
+  const ul = document.createElement("ul");
+  ul.classList.add("option");
+  ul.style.display = "none";
+  divParent.appendChild(ul);
+
+  divParent.addEventListener("click", () => {
+    ul.classList.toggle("active");
+    if (ul.classList.contains("active")) {
+      ul.style.display = "block";
+    } else {
+      ul.style.display = "none";
+    }
+  });
+
+  const allEpisodes = document.createElement("li");
+  allEpisodes.classList.add("options");
+  allEpisodes.textContent = "All Episodes";
+  ul.appendChild(allEpisodes);
+
+  const iconSelect = document.createElement("i");
+  iconSelect.classList.add("bi", "bi-chevron-down", "icon-select");
+  inputParent.appendChild(iconSelect);
+}
+
+export function renderLiOfInputEpisodes(data) {
+  const ul = document.querySelector(".option");
+
+  data.forEach((ep) => {
+    if (!ep) return;
+    const others = document.createElement("li");
+    others.setAttribute("id", `${ep.id}`);
+    others.classList.add("options");
+    others.textContent = `S0${ep.season}-E${ep.number} | ${
+      ep.name.slice(0, 10) + "..."
+    }`;
+    ul.appendChild(others);
+  });
+
+  ul.addEventListener("click", (e) => {
+    const sectionParent = document.querySelector(".render-ipsodes");
+    const selectedDiv = document.querySelector(".selected");
+
+    if (e.target.textContent === "All Episodes") {
+      sectionParent.innerHTML = "";
+      selectedDiv.textContent = "All Episodes";
+      data.forEach((data) => renderEpisodes(data, sectionParent));
+    } else if (e.target.textContent.includes("S0")) {
+      console.dir(e.target.id);
+      const sectionParent = document.querySelector(".render-ipsodes");
+      const findEp = data.find((ep) => ep.id.toString() === e.target.id);
+      if (!findEp) return;
+      sectionParent.innerHTML = "";
+      selectedDiv.textContent = e.target.textContent;
+      renderEpisodes(findEp, sectionParent);
+    }
+  });
+}
+
+کد های sass رو دیگه نمیفرستم و css و میفرستم واست
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-y: scroll;
+}
+html body {
+  background-color: rgb(29, 30, 41);
+}
+html body::-webkit-scrollbar {
+  width: 6px;
+}
+html body::-webkit-scrollbar-track {
+  background: transparent;
+}
+html body::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 4px;
+}
+
+header {
+  width: 100%;
+  display: inline-block;
+  position: fixed;
+  top: 20px;
+  z-index: 1;
+}
+header .navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+}
+header .navbar .logo {
+  color: white;
+}
+header .navbar .logo span {
+  color: rgb(23, 171, 121);
+}
+header .navbar .div-parent-search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+header .navbar .div-parent-search-form .navbar-form {
+  position: relative;
+}
+header .navbar .div-parent-search-form .navbar-form .navbar-form-input {
+  all: unset;
+  width: 250px;
+  height: 30px;
+  border: 0.5px solid #595a63;
+  border-radius: 20px;
+  color: #c2bfbf;
+  padding-left: 20px;
+  padding-bottom: 2px;
+  background-color: #2d2e37;
+}
+header .navbar .div-parent-search-form .navbar-form .navbar-form-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+header .navbar .div-parent-search-form .navbar-form .navbar-form-input::placeholder {
+  color: #c2bfbf;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select {
+  width: 250px;
+  height: 30px;
+  border: 0.5px solid #595a63;
+  border-radius: 20px;
+  color: #c2bfbf;
+  padding-left: 20px;
+  padding-top: 3px;
+  background-color: #2d2e37;
+  white-space: normal;
+  position: relative;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .selected {
+  all: unset;
+  width: 250px;
+  height: 30px;
+  border-radius: 20px;
+  color: #c2bfbf;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option {
+  width: 90%;
+  max-height: 150px;
+  background-color: #2d2e37;
+  border-radius: 5px;
+  position: absolute;
+  left: 15px;
+  overflow-y: auto;
+  padding-left: 5px;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option .options {
+  border-bottom: 0.5px solid #555;
+  list-style: none;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option::-webkit-scrollbar {
+  width: 6px;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+header .navbar .div-parent-search-form .navbar-form .custom-select .option::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+header .navbar .div-parent-search-form .navbar-form .icon-select {
+  position: absolute;
+  right: 15px;
+  top: 7px;
+  color: white;
+  font-size: 13px;
+}
+header .navbar .div-parent-search-form .navbar-form .search-icon {
+  color: white;
+  position: absolute;
+  right: 15px;
+  top: 4.5px;
+}
+header .navbar .div-parent-search-form .parent-icon-play {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #00e08c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+header .navbar .div-parent-search-form .parent-icon-play .play-icon {
+  color: white;
+  font-size: 30px;
+}
+
+.sidebar {
+  width: 80px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.sidebar .sidebar-ul {
+  width: 80px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 50px;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+.sidebar .sidebar-ul .childe-ul-sid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.sidebar .sidebar-ul .childe-ul-sid .side-icons {
+  font-size: 24px;
+  color: rgb(181, 183, 187);
+}
+.sidebar .sidebar-ul .childe-ul-sid .a-li-ul-sidbar {
+  font-size: 13px;
+  text-decoration: none;
+  color: rgb(181, 183, 187);
+}
+.sidebar .sidebar-ul .childe-ul-sid:hover .side-icons {
+  color: rgba(83, 255, 170, 0.9);
+  text-shadow: 0 0 40px rgba(83, 255, 170, 0.9);
+}
+.sidebar .sidebar-ul .childe-ul-sid:hover .a-li-ul-sidbar {
+  color: rgba(83, 255, 170, 0.9);
+}
+
+@media (max-width: 532px) {
+  .sidebar {
+    width: 60px;
+  }
+  .sidebar .side-icons {
+    font-size: 19px;
+  }
+  .sidebar .a-li-ul-sidbar {
+    font-size: 8px;
+    text-decoration: none;
+  }
+}
+main {
+  width: 100%;
+  display: inline-flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 100px;
+  gap: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+}
+main::-webkit-scrollbar {
+  display: none;
+}
+main .img-main {
+  border-radius: 7px;
+}
+main .movies-side {
+  background-color: #2d2e37;
+  height: 45px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: row;
+  color: white;
+  padding-left: 7px;
+  border-radius: 5px;
+}
+main .render-ipsodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.responsive {
+  width: 920px;
+}
+@media (max-width: 1050px) {
+  .responsive {
+    width: 700px;
+  }
+}
+@media (max-width: 835px) {
+  .responsive {
+    width: 550px;
+  }
+}
+@media (max-width: 690px) {
+  .responsive {
+    width: 400px;
+  }
+}
+@media (max-width: 532px) {
+  .responsive {
+    width: 300px;
+  }
+}
+
+.div-card-parent {
+  width: 220px;
+  height: 300px;
+  position: relative;
+}
+.div-card-parent .card-serial {
+  transition: all 0.1s linear;
+}
+.div-card-parent .card-serial:hover {
+  transform: scale(0.95);
+  cursor: pointer;
+}
+.div-card-parent .card-serial .card-body {
+  width: 220px;
+  position: absolute;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+}
+
+.card-episode {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.card-episode .episode-card-body {
+  width: 100%;
+  height: 100px;
+  position: relative;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  padding: 0px 10px;
+  padding-top: 10px;
+}
+.card-episode .episode-card-body .tooltip {
+  max-width: 170px;
+  max-height: 150px;
+  position: absolute;
+  left: 0;
+  top: -50px;
+  background-color: rgb(29, 30, 41);
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 100;
+  overflow-y: auto;
+  white-space: normal;
+}
+.card-episode .episode-card-body .tooltip::-webkit-scrollbar {
+  width: 6px;
+}
+.card-episode .episode-card-body .tooltip::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+.card-episode .episode-card-body .tooltip::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+.card-episode .episode-card-body:hover .tooltip {
+  opacity: 1;
+}
+.card-episode .episode-card-body .box-icon {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 10px;
+}
+.card-episode .episode-card-body .box-icon .parent-icon-play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #00e08c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+.card-episode .episode-card-body .box-icon .parent-icon-play .play-episode-icon {
+  color: white;
+  font-size: 40px;
+}
+
+footer {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  gap: 10px;
+}
+footer .social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 30px;
+}
+footer .social-icons .social-item {
+  color: rgb(181, 183, 187);
+  font-size: 20px;
+  list-style: none;
+}
+footer .social-icons .social-item i {
+  color: rgb(181, 183, 187);
+  transition: color 0.3s linear;
+}
+footer .social-icons .social-item:hover i {
+  color: rgba(83, 255, 170, 0.9);
+}
+footer .tenx-para {
+  color: rgba(83, 255, 170, 0.9);
+  text-align: center;
+  max-width: 90%;
+  font-size: 1rem;
+  line-height: 1.6;
+  padding: 0 10px;
+  transition: all 0.5s linear;
+}
+footer .tenx-para:hover {
+  text-shadow: 0 0 40px rgba(83, 255, 170, 0.9);
+}
+footer .tenx-para a {
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+}
+
+.div-of-error {
+  width: 400px;
+  height: 200px;
+  position: absolute;
+  top: 35%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  background-color: rgb(29, 30, 41);
+  color: white;
+  border-radius: 10px;
+  z-index: 101;
+}
+@media (max-width: 1050px) {
+  .div-of-error {
+    width: 300px;
+  }
+}
+@media (max-width: 532px) {
+  .div-of-error {
+    width: 200px;
+  }
+}
+.div-of-error .error-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  z-index: 100;
+}
+.div-of-error .p-Of-error {
+  margin-top: 20px;
+}
+.div-of-error .parent-of-btns {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  flex-direction: row;
+  margin-right: 15px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+.div-of-error .parent-of-btns .btn-errors {
+  color: white;
+  background-color: #00e08c;
+}
+
+.div-card-loading {
+  width: 220px;
+  height: 300px;
+  background-color: rgba(45, 47, 65, 0.9);
+  border-radius: 5px;
+  background: linear-gradient(100deg, #2d2f41 30%, #3a3c50 50%, #2d2f41 70%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/*# sourceMappingURL=styles.css.map */
+ -->

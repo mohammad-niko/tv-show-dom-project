@@ -107,11 +107,12 @@ export function renderEpisodes(data, elemnt) {
   divBody.classList.add("episode-card-body");
   divBody.style.paddingBottom = "5px";
   divCard.appendChild(divBody);
-
-  const tooltip = document.createElement("div");
-  tooltip.classList.add("tooltip");
-  tooltip.textContent = `${data.summary.replace(/<\/?p>/g, "")}`;
-  divBody.appendChild(tooltip);
+  if (data.summary) {
+    const tooltip = document.createElement("div");
+    tooltip.classList.add("tooltip");
+    tooltip.textContent = `${data.summary.replace(/<\/?p>/g, "")}`;
+    divBody.appendChild(tooltip);
+  }
 
   const pRank = document.createElement("p");
   pRank.classList.add("show-rand");
@@ -130,9 +131,9 @@ export function renderEpisodes(data, elemnt) {
   parentOfIcon.classList.add("parent-icon-play");
   boxIcon.appendChild(parentOfIcon);
 
-parentOfIcon.addEventListener("click",()=>{
-  window.open(data.url, "_blank");
-})
+  parentOfIcon.addEventListener("click", () => {
+    window.open(data.url, "_blank");
+  });
 
   const iconOfplay = document.createElement("i");
   iconOfplay.classList.add("bi", "bi-play", "play-episode-icon");
@@ -169,16 +170,6 @@ export function showError(error) {
   parentOfBtns.classList.add("parent-of-btns");
   divOfError.appendChild(parentOfBtns);
 
-  const btnTry = document.createElement("button");
-  btnTry.classList.add("btn", "btn-try", "btn-errors");
-  btnTry.textContent = "Try Again";
-  parentOfBtns.appendChild(btnTry);
-
-  btnTry.addEventListener("click", () => {
-    overlay.remove();
-    location.reload();
-  });
-
   const btnOk = document.createElement("button");
   btnOk.classList.add("btn", "btn-ok", "btn-errors");
   btnOk.textContent = "OK";
@@ -187,5 +178,90 @@ export function showError(error) {
   btnOk.addEventListener("click", () => {
     overlay.remove();
     divOfError.remove();
+  });
+}
+
+export function createSearchInput() {
+  const inputParent = document.querySelector(".navbar-form");
+
+  const searchInput = document.createElement("input");
+  searchInput.classList.add("navbar-form-input");
+  searchInput.type = "search";
+  searchInput.placeholder = "Search movie";
+  searchInput.setAttribute("aria-label", "Search");
+  inputParent.appendChild(searchInput);
+
+  const iconSearch = document.createElement("i");
+  iconSearch.classList.add("bi", "bi-search", "search-icon");
+  inputParent.appendChild(iconSearch);
+}
+
+export function createEpisodesInput() {
+  const inputParent = document.querySelector(".navbar-form");
+
+  const divParent = document.createElement("div");
+  divParent.classList.add("custom-select");
+  inputParent.appendChild(divParent);
+
+  const selectedDiv = document.createElement("div");
+  selectedDiv.classList.add("selected");
+  selectedDiv.textContent = "All Episodes";
+  divParent.appendChild(selectedDiv);
+
+  const ul = document.createElement("ul");
+  ul.classList.add("option");
+  ul.style.display = "none";
+  divParent.appendChild(ul);
+
+  divParent.addEventListener("click", () => {
+    ul.classList.toggle("active");
+    if (ul.classList.contains("active")) {
+      ul.style.display = "block";
+    } else {
+      ul.style.display = "none";
+    }
+  });
+
+  const allEpisodes = document.createElement("li");
+  allEpisodes.classList.add("options");
+  allEpisodes.textContent = "All Episodes";
+  ul.appendChild(allEpisodes);
+
+  const iconSelect = document.createElement("i");
+  iconSelect.classList.add("bi", "bi-chevron-down", "icon-select");
+  inputParent.appendChild(iconSelect);
+}
+
+export function renderLiOfInputEpisodes(data) {
+  const ul = document.querySelector(".option");
+
+  data.forEach((ep) => {
+    if (!ep) return;
+    const others = document.createElement("li");
+    others.setAttribute("id", `${ep.id}`);
+    others.classList.add("options");
+    others.textContent = `S0${ep.season}-E${ep.number} | ${
+      ep.name.slice(0, 10) + "..."
+    }`;
+    ul.appendChild(others);
+  });
+
+  ul.addEventListener("click", (e) => {
+    const sectionParent = document.querySelector(".render-ipsodes");
+    const selectedDiv = document.querySelector(".selected");
+
+    if (e.target.textContent === "All Episodes") {
+      sectionParent.innerHTML = "";
+      selectedDiv.textContent = "All Episodes";
+      data.forEach((data) => renderEpisodes(data, sectionParent));
+    } else if (e.target.textContent.includes("S0")) {
+      console.dir(e.target.id);
+      const sectionParent = document.querySelector(".render-ipsodes");
+      const findEp = data.find((ep) => ep.id.toString() === e.target.id);
+      if (!findEp) return;
+      sectionParent.innerHTML = "";
+      selectedDiv.textContent = e.target.textContent;
+      renderEpisodes(findEp, sectionParent);
+    }
   });
 }
