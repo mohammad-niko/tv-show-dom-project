@@ -1,45 +1,52 @@
-# TV Show DOM Project
+🎥 TV Show DOM Project
+A lightweight and interactive web application that fetches and displays TV show episodes using the TVMaze API.
+This project demonstrates DOM manipulation, API integration, and a clean UI layout.
 
-A lightweight and interactive web application that fetches and displays TV show episodes using the TVMaze API. Built to demonstrate DOM manipulation, API integration, and clean UI with search and filtering features.
+🌟 Features
+Displays detailed information for each episode:
 
-## 🌟 Features
+Episode title
 
-- Shows detailed information for each episode:
-  - Episode title
-  - Season and episode number (formatted like `S02-E09`)
-  - Medium-sized image
-  - Episode summary
+Season and episode number (formatted as S02-E09)
 
-- The page clearly states that the data comes from TVMaze and includes a link to the source.
+Medium-sized image
 
-## 🔍 Search Functionality
+Episode summary
 
-- You can search episodes by name or summary
-- Results update instantly as you type
-- Displays the number of matching results
-- Search runs on data already loaded into memory (no extra API calls)
+The page includes a credit note and a link to the original data source (TVMaze).
 
-## 🎬 Episode Selector & Multiple Shows
+🔍 Search Functionality
+Search episodes by title or summary
 
-- Supports displaying episodes from multiple TV shows
-- Includes a dropdown menu to quickly jump to any episode
-- Option to show only the selected episode or return to the full list
+Results update instantly as you type
 
-## 🔧 Technologies Used
+Displays the number of matching results
 
-- HTML  
-- CSS  
-- JavaScript  
-- TVMaze API
+When you select a show, its episodes are fetched via API, and the search operates on that loaded data
 
-## 🚀 Deployment
+🎬 Multiple TV Shows
+Supports displaying episodes from multiple TV shows
 
+When a show is selected, its episodes are displayed as cards on the page
+
+A reset option is available to return to the full list
+
+🛠️ Technologies Used
+HTML
+
+SASS (CSS preprocessor)
+
+JavaScript
+
+TVMaze API
+
+🚀 Deployment
 The project can be deployed using GitHub Pages or Netlify.
 
-Example Netlify URL:  
-`https://aps-[your-github-username]-tv.netlify.app/`
+Example Netlify URL:
+https://aps-[your-github-username]-tv.netlify.app/
 
-## 🧩 Data Source
+🧩 Data Source
+All episode data is provided by TVMaze.
+A link to the original source is included at the bottom of the page to give proper credit.
 
-All episode data is provided by [TVMaze](https://www.tvmaze.com).  
-A link to the original source is included on the page as proper credit.
