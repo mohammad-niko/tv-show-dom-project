@@ -26,8 +26,6 @@ export async function handleRoute() {
     if (hash === "#/" || hash === "") {
       setIsHomeView(true);
       renderHomeView();
-
-      const inputParent = document.querySelector(".navbar-form");
       createSearchInput();
 
       const sectionParent = document.querySelector(".render-ipsodes");

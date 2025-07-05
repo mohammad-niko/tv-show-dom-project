@@ -23,10 +23,18 @@ main {
   .movies-side {
     background-color: $input-bg;
     height: 45px;
-    @include flex-center(start, center);
+    @include flex-center(space-between, center);
     color: white;
     padding-left: 7px;
     border-radius: 5px;
+
+    .result-count {
+      width: 80px;
+      height: 100%;
+      padding-top: 10px;
+      padding-right: 15px;
+      color: white;
+    }
   }
 
   .render-ipsodes {
@@ -36,8 +44,6 @@ main {
     justify-content: center;
   }
 }
-
-
 
 .responsive {
   width: 920px;

@@ -17,6 +17,10 @@ export async function searchLive(e) {
     setIsHomeView(false)
     const result = await apiSearch(query);
     result.forEach(({ show }) => renderSearchEpisodes(show));
+
+    const resultCount = document.querySelector(".result-count");
+    resultCount.style.display="inline"
+    resultCount.textContent=`Result=${result.length}`
   } catch (error) {
     console.log(error);
   } finally {

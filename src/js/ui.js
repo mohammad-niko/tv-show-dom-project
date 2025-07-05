@@ -15,6 +15,11 @@ export function renderHomeView() {
   div.textContent = "MOVIES";
   main.appendChild(div);
 
+  const resultCount= document.createElement("div");
+  resultCount.classList.add("result-count");
+  resultCount.style.display="none";
+  div.appendChild(resultCount)
+
   const section = document.createElement("section");
   section.classList.add("render-ipsodes", "responsive");
   main.appendChild(section);
