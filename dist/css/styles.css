@@ -256,7 +256,7 @@ main .render-ipsodes {
 }
 @media (max-width: 532px) {
   .responsive {
-    width: 300px;
+    width: 260px;
   }
 }
 

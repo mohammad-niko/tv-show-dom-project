@@ -50,3 +50,15 @@
     }
   }
 }
+@include respond(400px) {
+  .sidebar {
+    width: 45px;
+    .side-icons {
+      font-size: 17px;
+    }
+    .a-li-ul-sidbar {
+      font-size: 6px;
+      text-decoration: none;
+    }
+  }
+}

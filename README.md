@@ -43,8 +43,7 @@ TVMaze API
 🚀 Deployment
 The project can be deployed using GitHub Pages or Netlify.
 
-Example Netlify URL:
-https://aps-[your-github-username]-tv.netlify.app/
+https://aps-mohammd-niko-tv.netlify.app
 
 🧩 Data Source
 All episode data is provided by TVMaze.
