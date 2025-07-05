@@ -28,6 +28,7 @@ export async function apiSearch(query) {
       `https://api.tvmaze.com/search/shows?q=${query}`,
       config
     );
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);

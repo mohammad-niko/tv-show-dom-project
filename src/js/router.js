@@ -11,7 +11,7 @@ import {
 import { getEpisodesApi, getSerials } from "./api.js";
 import { setIsHomeView } from "./app.js";
 
-import { searchLive } from "./search.js";
+import { debounce } from "./search.js";
 import { getSerialEpisodes } from "./episodes.js";
 import { handleScroll } from "./scroll.js";
 
@@ -35,7 +35,7 @@ export async function handleRoute() {
       data.forEach((data) => renderCard(data, sectionParent));
 
       const input = document.querySelector(".navbar-form-input");
-      input.addEventListener("input", searchLive);
+      input.addEventListener("input", debounce(500));
 
       window.addEventListener("scroll", handleScroll);
       sectionParent.addEventListener("click", getSerialEpisodes);
